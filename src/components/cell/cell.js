@@ -21,7 +21,6 @@ class Cell extends Component {
     super(props)
     this.state={
       array:['','','','','','','','','','','','','','','','','','','','','','','','',''],
-      isActive:false,
       name:props.name
     }
     const { dispatch } = props
@@ -38,7 +37,7 @@ class Cell extends Component {
     
   }
 
-  handleSelect(num,row,col) {
+  handleSelect(num) {
     if(this.state.name===this.props.isTurn){
       let { dispatch } = this.props
       let addNum = actions.addNumber(num);
