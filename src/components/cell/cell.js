@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-import * as utils from '../utils'; 
+import { connect } from 'react-redux';
 import { actionCreators as actions } from '../../reducer';
 
 let p1_codi = new Array(5);
@@ -20,60 +18,66 @@ class Cell extends Component {
   constructor(props){
     super(props)
     this.state={
-      array:['','','','','','','','','','','','','','','','','','','','','','','','',''],
       name:props.name
     }
-    const { dispatch } = props
-    this.boundActionCreators = bindActionCreators(actions, dispatch)
-    this.handleSelect = this.handleSelect.bind(this);
   }
 
-  componentDidMount() {
-    let array = utils.random()
-    
-    this.setState({
-      array
-    })
-    
-  }
-
-  handleSelect(num) {
+  handleSelect(num, row, col) {
+    if(this.props.isPlaying){
+      //turn check
     if(this.state.name===this.props.isTurn){
-      let { dispatch } = this.props
-      let addNum = actions.addNumber(num);
-        dispatch(addNum)
-      let turn = actions.thisTurn(this.state.name==='p1'?'p2':'p1')
-        dispatch(turn)
+      this.props.selectNum(num)
+      this.props.thisTurn(this.state.name==='p1'?'p2':'p1')
     }
     else{
       window.alert("잘못 된 차례입니다.")
     }
+
+    //count check
+
+    if(this.state.name==='p1'){
+      p1_codi[row][col]=1;
+      p1_count = this.isBingo(p1_codi,1);
+    }
+    else if(this.state.name==='p2'){
+      p2_codi[row][col]=1;
+      p2_count =this.isBingo(p2_codi,1);
+    }   
+
+    if(p1_count>4 || p2_count>4){
+      if(p1_count >=5 && p2_count < 5){
+        window.alert("1P가 빙고를 완성했습니다.")
+      } //1p win
+      else if(p2_count >= 5 && p1_count < 5){
+        window.alert("2P가 빙고를 완성했습니다.")
+      }//2p win
+      else{
+        window.alert("무승부 입니다.")
+      }//무승부
+    }
+    console.log(`1p: ${p1_count} , 2p: ${p2_count}`)
+    console.log(p1_codi);
+    }
+  }
+
+  componentDidMount() {
+    this.setState({
+      array: this.state.array
+    })
   }
 
   isActive(isSelected,cell,row,col){  
-    for(let i=0;i<isSelected.length;i++){
-      if(isSelected[i] === cell) {
-        if(this.state.name==='p1'){
-          p1_codi[row][col]=1;
-          p1_count = this.isBingo(p1_codi,1);
+    if(this.props.isPlaying){
+      for(let i=0;i<isSelected.length;i++){
+        if(isSelected[i] === cell) {        
+          return true;
         }
-        else if(this.state.name==='p2'){
-          p2_codi[row][col]=1;
-          p2_count = this.isBingo(p2_codi,1);
-        }
-        if(p1_count>4 && p2_count>4 && p1_count === p1_count){
-          window.alert("무승부 입니다.")
-        }else {
-          if(p1_count >=5){
-            window.alert("1P가 빙고를 완성했습니다.")
-          }
-          if(p2_count >=5){
-            window.alert("2P가 빙고를 완성했습니다.")
-          }
-        }
-        return true;
       }
     }
+  }
+
+  handleClick(){
+    console.log(this.props.isPlaying)
   }
 
   isBingo(array,g){
@@ -98,9 +102,7 @@ class Cell extends Component {
   }
 
   render() {
-    const { isSelected } = this.props;
-
-    const { array } = this.state;
+    let { isSelected, array } = this.props;
     const { length } = array;
     const maxLength = 5;
     const iteratorCount = length / maxLength;
@@ -130,9 +132,25 @@ class Cell extends Component {
   }
 }
 
-export default connect(state =>({ 
-  isSelected: state.isSelected,
-  isPlaying: state.isPlaying,
-  isTurn: state.isTurn
-}))(Cell);
+const mapStateToProps = (state) => {
+  const { isSelected, isTurn, isPlaying } = state;
+  return {
+    isPlaying,
+    isSelected,
+    isTurn
+  };
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    thisTurn : (num) => {
+      return dispatch(actions.thisTurn(num))
+    },
+    selectNum : (num) => {
+      return dispatch(actions.selectNumber(num))
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Cell);
 

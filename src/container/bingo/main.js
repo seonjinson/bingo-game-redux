@@ -1,33 +1,57 @@
 import React, { Component } from 'react';
-
+import * as utils from '../../components/utils'; 
 import Cell from '../../components/cell/cell';
 
 class Bingo extends Component {
-  
+  constructor(props){
+    super(props);
+    this.state={
+      restartGame: this.props.restartGame,
+      startGame: this.props.startGame,
+      array1: ['','','','','','','','','','','','','','','','','','','','','','','','',''],
+      array2: ['','','','','','','','','','','','','','','','','','','','','','','','','']
+    }
+  }
 
+  handleRoad() {
+    let array1 = utils.random();
+    let array2 = utils.random();
 
+    this.setState({
+      array1,
+      array2
+    }) 
+  }
+
+  handleReStart() {
+   this.state.restartGame();
+    this.handleRoad();
+  }
+
+  handleStart() {
+    this.state.startGame();
+    this.handleRoad()
+  }
 
   render() {
-    const { isPlaying, startGame, restartGame } = this.props;
+    let { isPlaying } = this.props;
     
     return(
       <div>
         <div>
-          
-          {!isPlaying ? <button onClick={startGame}>게임 시작</button> : <button onClick={restartGame}>게임 재시작</button>}
+          {!isPlaying ? <button onClick={()=>this.handleStart()}>게임 시작</button> : <button onClick={()=>this.handleReStart()}>게임 재시작</button>}
           <div>
             <p>P1</p>
-            <Cell name="p1"/>
+            <Cell name="p1" array={this.state.array1}/>
           </div>
           <div>
             <p>p2</p>
-            <Cell name="p2"/>
+            <Cell name="p2" array={this.state.array2}/>
           </div>
         </div>
       </div>
     )
   }
 }
-
 
 export default Bingo;
