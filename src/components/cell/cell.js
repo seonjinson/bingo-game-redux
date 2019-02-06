@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { actionCreators as actions } from '../../reducer';
+import * as utils from '../../components/utils'; 
 
 let p1_codi = new Array(5);
     for(let i=0; i<5; i++){
@@ -14,36 +15,48 @@ for(let i=0; i<5; i++){
 let p1_count=0;
 let p2_count=0;
 
+let p1_TwoArray;
+let p2_TwoArray;
+
 class Cell extends Component {
   constructor(props){
     super(props)
     this.state={
-      name:props.name
+      name: props.name
     }
   }
 
-  handleSelect(num, row, col) {
+  async handleSelect(num) {
     if(this.props.isPlaying){
       //turn check
-    if(this.state.name===this.props.isTurn){
-      this.props.selectNum(num)
-      this.props.thisTurn(this.state.name==='p1'?'p2':'p1')
+      if(this.state.name===this.props.isTurn){
+        await this.props.selectNum(num)
+        this.props.thisTurn(this.state.name==='p1'?'p2':'p1')
+        await this.applyArrayState(num);
+        await this.isComplete(p1_count,p2_count);  
+      }else{
+        window.alert("잘못 된 차례입니다.")
+      }   
     }
-    else{
-      window.alert("잘못 된 차례입니다.")
-    }
+  }
+  
+  applyArrayState(num){
+    for(let i=0; i<5; i++) {
+      for(let j=0; j<5; j++) {
+        if(p1_TwoArray[i][j] === num){
+          p1_codi[i][j] = 1;
+          p1_count = this.isBingo(p1_codi,1);
+        }
+        if(p2_TwoArray[i][j] === num){
+          p2_codi[i][j] = 1;
+          p2_count = this.isBingo(p2_codi,1);
+        }
+      }
+    } 
+  }
 
-    //count check
-
-    if(this.state.name==='p1'){
-      p1_codi[row][col]=1;
-      p1_count = this.isBingo(p1_codi,1);
-    }
-    else if(this.state.name==='p2'){
-      p2_codi[row][col]=1;
-      p2_count =this.isBingo(p2_codi,1);
-    }   
-
+  isComplete(p1_count,p2_count){
+    console.log(`1p: ${p1_count} , 2p: ${p2_count}`)
     if(p1_count>4 || p2_count>4){
       if(p1_count >=5 && p2_count < 5){
         window.alert("1P가 빙고를 완성했습니다.")
@@ -55,9 +68,6 @@ class Cell extends Component {
         window.alert("무승부 입니다.")
       }//무승부
     }
-    console.log(`1p: ${p1_count} , 2p: ${p2_count}`)
-    console.log(p1_codi);
-    }
   }
 
   componentDidMount() {
@@ -66,7 +76,7 @@ class Cell extends Component {
     })
   }
 
-  isActive(isSelected,cell,row,col){  
+  isActive(isSelected,cell){  
     if(this.props.isPlaying){
       for(let i=0;i<isSelected.length;i++){
         if(isSelected[i] === cell) {        
@@ -74,10 +84,6 @@ class Cell extends Component {
         }
       }
     }
-  }
-
-  handleClick(){
-    console.log(this.props.isPlaying)
   }
 
   isBingo(array,g){
@@ -92,10 +98,10 @@ class Cell extends Component {
             countB++;
           }
       }
-      if(array[0][0]===g&&array[1][1]===g&&array[2][2]===g&&array[3][3]===g&&array[4][4]===g){ //대각선
+      if(array[0][0]===g&&array[1][1]===g&&array[2][2]===g&&array[3][3]===g&&array[4][4]===g){ //대각선1
         countB++;
       }
-      if(array[0][4]===g&&array[1][3]===g&&array[2][2]===g&&array[3][1]===g&&array[4][0]===g){ //대각선
+      if(array[0][4]===g&&array[1][3]===g&&array[2][2]===g&&array[3][1]===g&&array[4][0]===g){ //대각선2
         countB++;
       }
     return countB;
@@ -103,27 +109,20 @@ class Cell extends Component {
 
   render() {
     let { isSelected, array } = this.props;
-    const { length } = array;
-    const maxLength = 5;
-    const iteratorCount = length / maxLength;
-    let twoDimensionArray = [];
 
-    for (let i = 0; i < iteratorCount; i++) {
-	    twoDimensionArray = [
-		    ...twoDimensionArray,
-		    array.slice(i * maxLength, (i + 1) * maxLength),
-	    ];
-    }
+    p1_TwoArray = utils.TwoArray(this.props.p1_roaded);
+    p2_TwoArray = utils.TwoArray(this.props.p2_roaded);
+
     const buttonYellow = { backgroundColor: 'yellow' }
 
     return (
       <div>
         <table>
-          <tbody>{twoDimensionArray.map((row, row_i) => {
+          <tbody>{utils.TwoArray(array).map((row, row_i) => {
             let cols = row;
             return <tr key={row_i}>{cols.map((cell, col_i) => {
               return <td key={col_i}><button style={this.isActive(isSelected,cell,row_i,col_i)?buttonYellow:null}
-                                    onClick={()=>this.handleSelect(cell,row_i,col_i)}>{cell}</button></td>
+                                    onClick={()=>this.handleSelect(cell)}>{cell}</button></td>
               })}</tr>
             })}</tbody>
           </table>
@@ -133,10 +132,12 @@ class Cell extends Component {
 }
 
 const mapStateToProps = (state) => {
-  const { isSelected, isTurn, isPlaying } = state;
+  const { isSelected, isTurn, isPlaying, p1_roaded, p2_roaded } = state;
   return {
     isPlaying,
     isSelected,
+    p1_roaded,
+    p2_roaded,
     isTurn
   };
 }

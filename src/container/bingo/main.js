@@ -13,14 +13,16 @@ class Bingo extends Component {
     }
   }
 
-  handleRoad() {
+  async handleRoad() {
     let array1 = utils.random();
     let array2 = utils.random();
 
-    this.setState({
+    await this.setState({
       array1,
       array2
     }) 
+    this.props.roadNumToP1(this.state.array1);
+    this.props.roadNumToP2(this.state.array2);
   }
 
   handleReStart() {

@@ -15,8 +15,11 @@ const mapDispatchToProps = (dispatch) => {
   return {
     startGame: bindActionCreators(actions.startGame, dispatch),
     restartGame: bindActionCreators(actions.restartGame, dispatch),
-    roadNum : (num)=>{
-      return dispatch(actions.roadNumber(num))
+    roadNumToP1 : (num)=>{
+      return dispatch(actions.roadNumber_P1(num))
+    },
+    roadNumToP2 : (num)=>{
+      return dispatch(actions.roadNumber_P2(num))
     }
   }
 }

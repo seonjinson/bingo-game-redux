@@ -5,7 +5,8 @@
 const START_GAME = "START_GAME";
 const RESTART_GAME = "RESTART_GAME";
 const SELECT_NUMBER = "SELECT_NUMBER";
-const ROAD_NUMBER = "ROAD_NUMBER"; 
+const ROAD_NUMBER_P1 = "ROAD_NUMBER_P1"; 
+const ROAD_NUMBER_P2 = "ROAD_NUMBER_P2"; 
 const THIS_TURN = "THIS_TURN";
 
 
@@ -28,9 +29,16 @@ function selectNumber(num) {
   }
 }
 
-function roadNumber(num) {
+function roadNumber_P1(num) {
   return {
-    type: ROAD_NUMBER,
+    type: ROAD_NUMBER_P1,
+    num
+  }
+}
+
+function roadNumber_P2(num) {
+  return {
+    type: ROAD_NUMBER_P2,
     num
   }
 }
@@ -47,7 +55,8 @@ const initialState = {
   isPlaying: false,
   isRePlaying: false,
   isSelected: [],
-  roaded:[],
+  p1_roaded:[],
+  p2_roaded:[],
   isTurn: 'p1'
 }
 
@@ -59,8 +68,10 @@ function reducer(state = initialState, action) {
       return applyRestartGame(state);
     case SELECT_NUMBER:
       return applySelectNumber(state, action.num);
-    case ROAD_NUMBER:
-      return applyRoadNumber(state, action.num);
+    case ROAD_NUMBER_P1:
+      return applyRoadNumber_P1(state, action.num);
+    case ROAD_NUMBER_P2:
+      return applyRoadNumber_P2(state, action.num);
     case THIS_TURN:
       return applyThisTurn(state, action.who)
     default:
@@ -91,10 +102,17 @@ function applySelectNumber(state, num) {
   }
 }
 
-function applyRoadNumber(state,num) {
+function applyRoadNumber_P1(state,num) {
   return {
     ...state,
-    roaded: num
+    p1_roaded: num
+  }
+}
+
+function applyRoadNumber_P2(state,num) {
+  return {
+    ...state,
+    p2_roaded: num
   }
 }
 
@@ -111,7 +129,8 @@ const actionCreators = {
   startGame,
   restartGame,
   selectNumber,
-  roadNumber,
+  roadNumber_P1,
+  roadNumber_P2,
   thisTurn
 }
 

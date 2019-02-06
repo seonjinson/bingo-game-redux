@@ -15,3 +15,18 @@ export const random = () => {
   }
   return numbers;
 }
+
+export const TwoArray = (array) => {
+  const { length } = array;
+    const maxLength = 5;
+    const iteratorCount = length / maxLength;
+    let twoDimensionArray = [];
+
+    for (let i = 0; i < iteratorCount; i++) {
+	    twoDimensionArray = [
+		    ...twoDimensionArray,
+		    array.slice(i * maxLength, (i + 1) * maxLength),
+	    ];
+    }
+    return twoDimensionArray;
+}
