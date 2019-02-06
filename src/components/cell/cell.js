@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { actionCreators as actions } from '../../reducer';
 import * as utils from '../../components/utils'; 
+import Button from '@material-ui/core/Button';
 
 let p1_codi = new Array(5);
     for(let i=0; i<5; i++){
@@ -39,7 +40,7 @@ class Cell extends Component {
       }   
     }
   }
-  
+
   applyArrayState(num){
     for(let i=0; i<5; i++) {
       for(let j=0; j<5; j++) {
@@ -113,7 +114,7 @@ class Cell extends Component {
     p1_TwoArray = utils.TwoArray(this.props.p1_roaded);
     p2_TwoArray = utils.TwoArray(this.props.p2_roaded);
 
-    const buttonYellow = { backgroundColor: 'yellow' }
+    const buttonColor = { backgroundColor: '#7caaf4' }
 
     return (
       <div>
@@ -121,8 +122,12 @@ class Cell extends Component {
           <tbody>{utils.TwoArray(array).map((row, row_i) => {
             let cols = row;
             return <tr key={row_i}>{cols.map((cell, col_i) => {
-              return <td key={col_i}><button style={this.isActive(isSelected,cell,row_i,col_i)?buttonYellow:null}
-                                    onClick={()=>this.handleSelect(cell)}>{cell}</button></td>
+              return <td key={col_i}><Button 
+                                        variant="outlined" 
+                                        size="small" 
+                                        color="primary" 
+                                        style={this.isActive(isSelected,cell,row_i,col_i)?buttonColor:null}
+                                    onClick={()=>this.handleSelect(cell)}>{cell}</Button></td>
               })}</tr>
             })}</tbody>
           </table>

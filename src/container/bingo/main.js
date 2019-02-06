@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import Button from '@material-ui/core/Button';
 import * as utils from '../../components/utils'; 
 import Cell from '../../components/cell/cell';
+import '../../components/app.css';
 
 class Bingo extends Component {
   constructor(props){
@@ -41,12 +43,15 @@ class Bingo extends Component {
     return(
       <div>
         <div>
-          {!isPlaying ? <button onClick={()=>this.handleStart()}>게임 시작</button> : <button onClick={()=>this.handleReStart()}>게임 재시작</button>}
-          <div>
+          <div className="start">
+          {!isPlaying ? <Button variant="contained" color="secondary" onClick={()=>this.handleStart()}>게임 시작</Button> : 
+            <Button variant="contained" color="secondary" onClick={()=>this.handleReStart()}>게임 재시작</Button>}
+          </div>
+          <div className="container">
             <p>P1</p>
             <Cell name="p1" array={this.state.array1}/>
           </div>
-          <div>
+          <div className="container">
             <p>p2</p>
             <Cell name="p2" array={this.state.array2}/>
           </div>

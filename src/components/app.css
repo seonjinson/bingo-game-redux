@@ -1,0 +1,9 @@
+.container {
+  margin-left: 20px;
+  float: left;
+  width: 30%
+}
+.start {
+  margin-left: 20px;
+  font-size: 5rem;
+}
