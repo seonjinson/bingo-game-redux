@@ -18,4 +18,4 @@ You will also see any lint errors in the console.
 
 
 ## Screenshot
-![screensh](./img/screenchot.png)
+![screensh](./img/screenshot.png)
